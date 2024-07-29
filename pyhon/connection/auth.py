@@ -117,8 +117,10 @@ class HonAuth:
         }
         params_encode = "&".join([f"{k}={v}" for k, v in params.items()])
         url = f"{const.AUTH_API}/services/oauth2/authorize/expid_Login?{params_encode}"
+        print(url)
         async with self._request.get(url) as response:
             text = await response.text()
+            print(text)
             self._expires = datetime.utcnow()
             login_url: List[str] = re.findall("(?:url|href) ?= ?'(.+?)'", text)
             if not login_url:
@@ -130,6 +132,7 @@ class HonAuth:
             if login_url[0].startswith("/NewhOnLogin"):
                 # Force use of the old login page to avoid having to make the new one work..
                 login_url[0] = f"{const.AUTH_API}/s/login{login_url[0]}"
+                print(login_url[0])
         return login_url[0]
 
     async def _manual_redirect(self, url: str) -> str:
